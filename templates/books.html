@@ -9,35 +9,21 @@
 
 <!-- Product list -->
 <div class="container-fluid">
-    <div class="row mx-5 my-4">
-        <div class="col-md-3 mx-4 my-4">
-            <div class="card" style="width: 14rem; border: none;">
-                <img src="../static/assets/img/philosophers_stone.png" class="card-img-top rounded img-fluid" alt="...">
-                <div class="card-body my-1 mx-1 px-0 py-0">
-                    <p class="lead fw-bold card-title lh-sm" style="font-size: 1rem;">Harry Potter and the Philosopher's Stone</p>
-                    <p class="lead fw-normal" style="font-size: 0.9rem;">J. K. Rowling</p>
-                    <ul class="list-unstyled my-0">
-                    <li style="display: inline;"><p class="card-text" style="display: inline; font-size: 1rem;">€<strong>12.49</strong></p></li>
-                    <li style="display: inline;"><a href="{{ url_for('buy_books') }}" class="btn btn-dark btn-sm mx-4 mb-1" style="font-size: 1rem;">Buy Now</a></li>
-                    </ul>
-                </div>
-                </div>
-        </div>
-
+    <div class="row mx-5 my-4 justify-content-around">
         {% for book in books %}
         <div class="col-md-3 mx-4 my-4">
             <div class="card" style="width: 14rem; border: none;">
-                <img src="{{ book.img_url }}" class="card-img-top img-fluid" alt="...">
-                <div class="card-body px-0 py-0">
+                <img src="{{ book.img_url }}" class="card-img-top rounded img-fluid" alt="...">
+                <div class="card-body my-1 mx-1 px-0 py-0">
                     <p class="lead fw-bold card-title lh-sm" style="font-size: 1rem;">{{ book.title }}</p>
                     <p class="lead fw-normal" style="font-size: 0.9rem;">{{ book.author }}</p>
                     <ul class="list-unstyled my-0">
                     <li style="display: inline;"><p class="card-text" style="display: inline; font-size: 1rem;">€<strong>{{ book.price }}</strong></p></li>
-                    <li style="display: inline;"><a href="#" class="btn btn-dark btn-sm mx-2 mb-1" style="font-size: 1rem;">Buy Now</a></li>
+                    <li style="display: inline;"><a href="{{ url_for('buy_books') }}" class="btn btn-dark btn-sm mx-3 mb-1" style="font-size: 1rem;">Add to Cart</a></li>
                     </ul>
                 </div>
-                </div>
+            </div>
         </div>
-        {% endfor %}
+        {% endfor %}        
     </div>
 </div>
