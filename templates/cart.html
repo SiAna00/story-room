@@ -2,9 +2,22 @@
 
 <div class="container-fluid">
     <div class="row">
+        {% for book in books %}
+        <div class="col-md-12" style="width: 14rem;">
+                <ul class="list-unstyled my-0">
+                    <li style="display: inline;">
+                        <img src="{{ book.img_url }}" class=" rounded img-fluid" alt="..."></li>
+                    <li style="display: inline;">
+                        <p class="">{{ book.title }}</p>
+                        <p class="">Quantity: 1</p>
+                        <p class="">Price: €{{ book.price }}</p>
+                    </li>
+                </ul>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
         <div class="col">
-            <h1 class="display-3">The Product</h1>
-            <p class="lead">Purchase the product for only €2.00.</p>
             <a href="#" class="btn btn-primary" id="buy_now_button">Buy Now</a>
         </div>
     </div>

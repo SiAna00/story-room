@@ -48,6 +48,18 @@ class Book(db.Model):
     price_id: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
 
+# Create cart
+class CartItem(db.Model):
+    __tablename__ = "cart_items"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    book_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
+    title: Mapped[str] = mapped_column(String(250), nullable=False)
+    author: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str] = mapped_column(String(500), nullable=False)
+    price: Mapped[int] = mapped_column(Integer, nullable=False)
+    price_id: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
+    img_url: Mapped[str] = mapped_column(String(250), nullable=False)
+
 with app.app_context():
     db.create_all()
 
@@ -142,35 +154,62 @@ def home():
 @app.route("/books")
 def show_books():
     books = db.session.execute(db.select(Book)).scalars().all()
-    print(books)
     return render_template("books.html", current_user=current_user, books=books)
 
 
-@app.route("/cart")
+@app.route("/cart", methods=["GET", "POST"])
 @login_required
 def buy_books():
-    session = stripe.checkout.Session.create(
-    payment_method_types=["card"],
-    line_items=[{
-        "price":"price_1OsR400455VRR3i29r9zUF0u",
-        "quantity": 1
-    }],
-    mode="payment",
-    success_url=url_for("thanks", _external=True) + "?session_id={CHECKOUT_SESSION_ID}",
-    cancel_url=url_for("buy_books", _external=True)
-    )
+    if request.method == "POST":
+        price_id = request.form.get("price_id")
+        print(f"PRICE ID IS: {price_id}")
+        book = db.session.execute(db.select(Book).where(Book.price_id == price_id)).scalar()
+        print(book.title)
 
-    return render_template(
-        "cart.html", 
-        checkout_session_id=session["id"], 
-        checkout_public_key=stripe_keys["publishable_key"],
-        current_user=current_user)
+        new_cart_item = CartItem(
+            book_id=book.id,
+            title=book.title,
+            author=book.author,
+            description=book.description,
+            price=book.price,
+            price_id=book.price_id,
+            img_url=book.img_url
+        )
+
+        db.session.add(new_cart_item)
+        db.session.commit()
+
+        books = db.session.execute(db.select(CartItem)).scalars().all()
+
+        line_items = []
+        for item in books:
+            line_items.append({
+                "price": item.price_id,
+                "quantity": 1
+            })
+
+        session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=line_items,
+        mode="payment",
+        success_url=url_for("thanks", _external=True) + "?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url=url_for("buy_books", _external=True)
+        )
+
+        return render_template(
+            "cart.html", 
+            checkout_session_id=session["id"], 
+            checkout_public_key=stripe_keys["publishable_key"],
+            current_user=current_user, books=books)
+    
+    books = db.session.execute(db.select(CartItem)).scalars().all()
+    return render_template("cart.html", books=books)
 
 
 @app.route("/thanks")
 @login_required
 def thanks():
-    return "Thanks!"
+    return render_template("thanks.html")
 
 
 @app.route("/add_books", methods=["GET", "POST"])

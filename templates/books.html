@@ -19,7 +19,12 @@
                     <p class="lead fw-normal" style="font-size: 0.9rem;">{{ book.author }}</p>
                     <ul class="list-unstyled my-0">
                     <li style="display: inline;"><p class="card-text" style="display: inline; font-size: 1rem;">€<strong>{{ book.price }}</strong></p></li>
-                    <li style="display: inline;"><a href="{{ url_for('buy_books') }}" class="btn btn-dark btn-sm mx-3 mb-1" style="font-size: 1rem;">Add to Cart</a></li>
+                    <li style="display: inline;">
+                        <form action="{{ url_for('buy_books') }}" method="post">
+                            <input type="hidden" id="price_id" name="price_id" value="{{ book.price_id }}">
+                            <button type="submit" class="btn btn-dark btn-sm mx-3 mb-1" style="font-size: 1rem;">Add to Cart</button>
+                        </form>
+                    </li>
                     </ul>
                 </div>
             </div>
