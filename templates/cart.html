@@ -1,25 +1,53 @@
 {% include "header.html" %}
 
+<!-- Header -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-7 mx-auto px-auto mt-5 text-center">
+            <h1 class="pb-2 display-6" style="display: inline-block;">My Cart ({{ number_of_items }})</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    {% if number_of_items == 0 %}
+    <div class="row justify-content-center">
+        <div class="col-md-7 text-center">
+            <p class="lead">There are no items in your cart. Go back to <a href="{{ url_for('show_books') }}">store</a>.</p>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="row justify-content-center">
+        <div class="col text-center">
+            <a href="#" class="btn btn-dark" id="buy_now_button">Buy Now</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
 <div class="container-fluid">
     <div class="row">
         {% for book in books %}
-        <div class="col-md-12" style="width: 14rem;">
-                <ul class="list-unstyled my-0">
-                    <li style="display: inline;">
-                        <img src="{{ book.img_url }}" class=" rounded img-fluid" alt="..."></li>
-                    <li style="display: inline;">
-                        <p class="">{{ book.title }}</p>
-                        <p class="">Quantity: 1</p>
-                        <p class="">Price: €{{ book.price }}</p>
-                    </li>
-                </ul>
+        <div class="row mx-5 px-5 my-4 justify-content-center gx-0">
+            <div class="col-md-3 mx-5 px-5 my-4 text-center">
+                <img src="{{ book.img_url }}" class="card-img-top rounded img-fluid" style="width: 12rem;" alt="...">
+            </div>
+            <div class="col-md-5 mx-4 my-4">
+                <div class="card my-3" style="border: none;">
+                    <div class="card-header">
+                        <h5>{{ book.title }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-title">Author: {{ book.author }}</p>
+                        <p class="card-text">Description: {{ book.description }}</p>
+                        <p class="card-text">Quantity: 1</p>
+                        <p class="card-text">Price: <strong>€{{ book.price }}</strong></p>
+                    </div>
+                </div>
+            </div>        
         </div>
         {% endfor %}
-    </div>
-    <div class="row">
-        <div class="col">
-            <a href="#" class="btn btn-primary" id="buy_now_button">Buy Now</a>
-        </div>
     </div>
 </div>
 

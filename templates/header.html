@@ -18,6 +18,10 @@
                     <ul class="list-unstyled float-end">
                         <li class="mx-2" style="display: inline;"><a href="{{ url_for('home') }}" class="lead link-dark link-offset-2 link-opacity-75-hover link-underline-opacity-75-hover">Home</a></li>
                         {% if current_user.is_authenticated %}
+                            {% if current_user.id == 1 %}
+                            <li class="mx-2" style="display: inline;"><a href="{{ url_for('inventory') }}" class="lead link-dark link-offset-2 link-opacity-75-hover link-underline-opacity-75-hover">Inventory</a></li>
+                            {% endif %}
+                        <li class="mx-2" style="display: inline;"><a href="{{ url_for('show_books') }}" class="lead link-dark link-offset-2 link-opacity-75-hover link-underline-opacity-75-hover">Store</a></li>
                         <li class="mx-2" style="display: inline;"><a href="{{ url_for('buy_books') }}" class="lead link-dark link-offset-2 link-opacity-75-hover link-underline-opacity-75-hover">My Cart</a></li>
                         <li class="mx-2" style="display: inline;"><a href="{{ url_for('logout') }}" class="lead btn btn-outline-dark" role="button">Log Out</a></li>
                         {% else %}

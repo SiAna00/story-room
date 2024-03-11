@@ -14,18 +14,14 @@
         <div class="col-md-3 mx-4 my-4">
             <div class="card" style="width: 14rem; border: none;">
                 <img src="{{ book.img_url }}" class="card-img-top rounded img-fluid" alt="...">
-                <div class="card-body my-1 mx-1 px-0 py-0">
+                <div class="card-body my-2 mx-1 px-0 py-0">
                     <p class="lead fw-bold card-title lh-sm" style="font-size: 1rem;">{{ book.title }}</p>
-                    <p class="lead fw-normal" style="font-size: 0.9rem;">{{ book.author }}</p>
-                    <ul class="list-unstyled my-0">
-                    <li style="display: inline;"><p class="card-text" style="display: inline; font-size: 1rem;">€<strong>{{ book.price }}</strong></p></li>
-                    <li style="display: inline;">
-                        <form action="{{ url_for('buy_books') }}" method="post">
-                            <input type="hidden" id="price_id" name="price_id" value="{{ book.price_id }}">
-                            <button type="submit" class="btn btn-dark btn-sm mx-3 mb-1" style="font-size: 1rem;">Add to Cart</button>
-                        </form>
-                    </li>
-                    </ul>
+                    <p class="lead fw-normal lh-sm" style="font-size: 0.9rem;">Author: {{ book.author }}</p>
+                    <p class="lead fw-normal lh-sm" style="font-size: 0.9rem;">Price: <strong>€{{ book.price }}</strong></p>
+                    <form action="{{ url_for('buy_books') }}" method="post">
+                        <input type="hidden" id="price_id" name="price_id" value="{{ book.price_id }}">
+                        <button type="submit" class="btn btn-dark btn-sm my-2" style="font-size: 1rem;">Add to Cart</button>
+                    </form>
                 </div>
             </div>
         </div>

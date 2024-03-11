@@ -36,6 +36,7 @@ class User(db.Model, UserMixin):
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(100), nullable=False)
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    bought_books = relationship("CartItem", back_populates="buyer")
 
 # Create inventory table
 class Book(db.Model):
@@ -47,18 +48,22 @@ class Book(db.Model):
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     price_id: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
 
 # Create cart
 class CartItem(db.Model):
     __tablename__ = "cart_items"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    book_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
+    buyer_id: Mapped[int] = mapped_column(Integer, db.ForeignKey("users.id"))
+    buyer = relationship("User", back_populates="bought_books")
+    book_id: Mapped[int] = mapped_column(Integer, nullable=False)
     title: Mapped[str] = mapped_column(String(250), nullable=False)
     author: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     price_id: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
 
 with app.app_context():
     db.create_all()
@@ -168,12 +173,14 @@ def buy_books():
 
         new_cart_item = CartItem(
             book_id=book.id,
+            buyer=current_user,
             title=book.title,
             author=book.author,
             description=book.description,
             price=book.price,
             price_id=book.price_id,
-            img_url=book.img_url
+            img_url=book.img_url,
+            quantity = 1
         )
 
         db.session.add(new_cart_item)
@@ -196,6 +203,10 @@ def buy_books():
         cancel_url=url_for("buy_books", _external=True)
         )
 
+        for book in books:
+            db.session.delete(book)
+            db.session.commit()
+
         return render_template(
             "cart.html", 
             checkout_session_id=session["id"], 
@@ -203,13 +214,21 @@ def buy_books():
             current_user=current_user, books=books)
     
     books = db.session.execute(db.select(CartItem)).scalars().all()
-    return render_template("cart.html", books=books)
+    return render_template("cart.html", books=books, number_of_items=len(books))
 
 
 @app.route("/thanks")
 @login_required
 def thanks():
-    return render_template("thanks.html")
+    return render_template("thanks.html", current_user=current_user)
+
+
+@app.route("/inventory")
+@admin_only
+def inventory():
+    books = db.session.execute(db.select(Book)).scalars().all()
+
+    return render_template("inventory.html", books=books, current_user=current_user)
 
 
 @app.route("/add_books", methods=["GET", "POST"])
@@ -224,11 +243,12 @@ def add_books():
         price = add_book_form.price.data
         price_id = add_book_form.price_id.data
         img_url = add_book_form.img_url.data
+        quantity = add_book_form.quantity.data
 
         book = db.session.execute(db.select(Book).where(Book.title == title)).scalar()
 
         if book:
-            return redirect("/show_books")
+            return redirect("/inventory")
 
         new_book = Book(
             title=title,
@@ -236,13 +256,14 @@ def add_books():
             description=description,
             price=price,
             price_id=price_id,
-            img_url=img_url
+            img_url=img_url,
+            quantity=quantity
         )
 
         db.session.add(new_book)
         db.session.commit()
 
-        return redirect (url_for("show_books"))
+        return redirect (url_for("inventory"))
     
     return render_template("add_books.html", form=add_book_form, current_user=current_user)
 

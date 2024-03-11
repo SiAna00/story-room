@@ -20,4 +20,5 @@ class AddBookForm(FlaskForm):
     price = FloatField("Price (Eur)", validators=[DataRequired()])
     price_id = StringField("Price ID", validators=[DataRequired()])
     img_url = StringField("Book Cover URL", validators=[DataRequired()])
+    quantity = IntegerField("Quantity", validators=[DataRequired()])
     add_button = SubmitField("Add")

@@ -1,0 +1,44 @@
+{% include "header.html" %}
+
+<!-- Header -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-7 mx-auto px-auto mt-5 text-center">
+            <h1 class="pb-2 display-6" style="display: inline-block;">Inventory Management</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Add Product to Inventory -->
+<div class="row justify-content-center mx-auto">
+    <div class="col-md-3 mt-3 mb-5 text-center">
+        <form action="{{ url_for('add_books') }}" method="post">
+            <button type="submit" class="btn btn-dark btn-sm mx-3 mb-1" style="font-size: 1rem;">Add Another Product</button>
+        </form>
+    </div>
+</div>
+    
+<!-- Product list -->
+<div class="container-fluid">
+    {% for book in books %}
+    <div class="row mx-5 px-5 my-4 justify-content-center gx-0">
+        <div class="col-md-3 mx-5 px-5 my-4 text-center">
+            <img src="{{ book.img_url }}" class="card-img-top rounded img-fluid" style="width: 12rem;" alt="...">
+        </div>
+        <div class="col-md-5 mx-4 my-4">
+            <div class="card my-3" style="border: none;">
+                <div class="card-header">
+                    <h5>{{ book.title }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-title">Author: {{ book.author }}</p>
+                    <p class="card-text">Description: {{ book.description }}</p>
+                    <p class="card-text">Quantity: {{ book.quantity }}</p>
+                    <p class="card-text">Price: €{{ book.price }}</p>
+                </div>
+            </div>
+        </div>        
+    </div>
+    {% endfor %}
+</div>
+    
