@@ -203,10 +203,6 @@ def buy_books():
         cancel_url=url_for("buy_books", _external=True)
         )
 
-        for book in books:
-            db.session.delete(book)
-            db.session.commit()
-
         return render_template(
             "cart.html", 
             checkout_session_id=session["id"], 
@@ -220,6 +216,12 @@ def buy_books():
 @app.route("/thanks")
 @login_required
 def thanks():
+    books = db.session.execute(db.select(CartItem)).scalars().all()
+
+    for book in books:
+        db.session.delete(book)
+        db.session.commit()
+
     return render_template("thanks.html", current_user=current_user)
 
 
